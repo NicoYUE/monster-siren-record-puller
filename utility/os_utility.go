@@ -1,10 +1,14 @@
 package utility
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
+	"runtime"
+	"time"
 )
 
 func Mkdir(path string, perm os.FileMode) error {
@@ -56,4 +60,29 @@ func WriteResponse2File(filename string, destDirectory string, response *http.Re
 	}
 
 	return outputPath
+}
+
+// WaitForExit attend une entrée utilisateur pour garder le terminal ouvert
+// Fonctionne même quand stdin n'est pas disponible (double-clic sur .exe Windows)
+func WaitForExit() {
+	fmt.Println("\nAppuyez sur Entrée pour quitter...")
+	
+	// Vérifier si stdin est disponible
+	stat, err := os.Stdin.Stat()
+	if err != nil || (stat.Mode()&os.ModeCharDevice) == 0 {
+		// stdin n'est pas disponible (double-clic sur .exe)
+		if runtime.GOOS == "windows" {
+			// Utiliser la commande pause de Windows
+			cmd := exec.Command("cmd", "/c", "pause")
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+		} else {
+			// Sur Unix, attendre quelques secondes
+			time.Sleep(5 * time.Second)
+		}
+	} else {
+		// stdin est disponible, lire une entrée
+		bufio.NewReader(os.Stdin).ReadBytes('\n')
+	}
 }

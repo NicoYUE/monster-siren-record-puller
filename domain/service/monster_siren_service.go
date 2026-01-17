@@ -28,7 +28,7 @@ func (service MonsterSirenService) RetrieveAlbums() []model.Album {
 		trimmedName := strings.TrimSpace(obj.Name)
 		album := model.Album{
 			AlbumId:  obj.Cid,
-			Name:     trimmedName,
+			Name:     utility.WinCharacter(trimmedName),
 			CoverUrl: obj.CoverUrl,
 			Artists:  obj.Artistes,
 		}

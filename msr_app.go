@@ -34,6 +34,8 @@ func main() {
 	albums := msrService.RetrieveAlbums()
 	AsyncAlbumDownload(albums)
 
+	// Garder le terminal ouvert pour voir les erreurs
+	utility.WaitForExit()
 }
 
 func AsyncAlbumDownload(albums []model.Album) {

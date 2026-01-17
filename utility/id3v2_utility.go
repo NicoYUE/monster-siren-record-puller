@@ -1,21 +1,28 @@
 package utility
 
 import (
-	"github.com/bogem/id3v2/v2"
 	"io"
 	"log"
 	"os"
+
+	"github.com/bogem/id3v2/v2"
 )
 
 func PictureFrame(filename string) id3v2.PictureFrame {
 	mime, _ := PictureMime(filename)
-	file, err := os.OpenFile(filename, os.O_RDONLY, 0)
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Printf("Failed to open picture file '%s': %v", filename, err)
+		WaitForExit()
+		os.Exit(1)
+	}
 	defer file.Close()
 
 	data, err := io.ReadAll(file)
-
 	if err != nil {
-		log.Fatal("Failed to read picture")
+		log.Printf("Failed to read picture from file '%s': %v", filename, err)
+		WaitForExit()
+		os.Exit(1)
 	}
 
 	return id3v2.PictureFrame{
